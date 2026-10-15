@@ -1,0 +1,16 @@
+//- `meta.pagePagination` is absent — not empty — on pages created by a plugin
+//- that runs after this one (plugin-tags builds its tag overview pages inside
+//- its own getMetaData, and this plugin sorts before it alphabetically).
+//- Without this guard the template threw and killed the whole render.
+- var pagePagination = (typeof meta !== 'undefined' && meta && meta.pagePagination) || {}
+//- A page with another <nav> (the main menu) needs each one named, or
+//- screen readers announce two identical "navigation" landmarks. `t` is the
+//- site's translation helper; the key falls back to itself.
+- var paginationLabel = typeof t === 'function' ? t('Pagination') : 'Pagination'
+
+nav.page-pagination(aria-label=paginationLabel)
+  if pagePagination.previous
+    a.page-pagination__link.page-pagination__link--previous(href=pagePagination.previous.href) #{ pagePagination.previous.name }
+
+  if pagePagination.next
+    a.page-pagination__link.page-pagination__link--next(href=pagePagination.next.href) #{ pagePagination.next.name }

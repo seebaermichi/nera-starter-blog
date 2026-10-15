@@ -1,0 +1,34 @@
+-
+    // `app.tagsConfig` is provided by getAppData, but a layout that renders
+    // this template outside a tag page has no reason to have it. Reading
+    // through it unguarded used to fail the whole build.
+    const tagsConfig = app.tagsConfig || {}
+    const taggedPages = meta.taggedPages || []
+    const lang = meta.lang || app.lang
+    // Keyed on the slug, most specific first: a per-language key, then the
+    // language-agnostic one, then the raw tag name — accepted as a fallback so
+    // a config written before slugs existed keeps working for single-word tags.
+    // The link text goes through the site's translation helper, so a German
+    // site can say "Weiterlesen"; `t` falls back to the key itself.
+    const readMore = typeof t === 'function' ? t('Read more') : 'Read more'
+    const tagImage = tagsConfig[`tag_overview_${ lang }_${ meta.tagSlug }_image`] || tagsConfig[`tag_overview_${ meta.tagSlug }_image`] || tagsConfig[`tag_overview_${ meta.tag }_image`] || tagsConfig[`tag_overview_${ lang }_default_image`] || tagsConfig.tag_overview_default_image
+
+section.tag-overview
+    header.tag-overview__header
+        h1.tag-overview__title #{ meta.title }
+
+        if tagImage
+            img.tag-overview__image(src=`${ tagImage }` alt='')
+
+    if taggedPages.length > 0
+        section.tag-overview__content
+            each page in taggedPages
+                article.tag-overview__item
+                    h2.tag-overview__item-title #{ page.meta.title }
+
+                    if page.meta.createdAt
+                        time.tag-overview__item-date #{ new Date(page.meta.createdAt).toLocaleString(lang) }
+
+                    p.tag-overview__item-description #{ page.meta.description }
+
+                    a.tag-overview__item-link(href=`${ page.meta.href }`) #{ readMore }

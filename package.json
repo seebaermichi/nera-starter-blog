@@ -1,0 +1,63 @@
+{
+    "name": "@nera-static/starter-blog",
+    "version": "1.0.0",
+    "description": "A ready-to-edit Nera blog on @nera-static/theme-blog: three sample posts, tags, an archive by year, prev/next, an Atom feed, a sitemap, code blocks, navigation, responsive images, social links and imprint and privacy placeholders. No JavaScript.",
+    "type": "module",
+    "scripts": {
+        "lint": "eslint .",
+        "test": "vitest",
+        "prepare": "husky"
+    },
+    "files": [
+        "config",
+        "pages",
+        "theme",
+        "CHANGELOG.md"
+    ],
+    "keywords": [
+        "nera",
+        "nera-starter",
+        "static-site-generator",
+        "starter",
+        "blog"
+    ],
+    "nera": {
+        "starter": {
+            "label": "Blog",
+            "description": "A ready-to-edit Nera blog on @nera-static/theme-blog: three sample posts, tags, an archive by year, prev/next, an Atom feed, a sitemap, code blocks, navigation, responsive images, social links and imprint and privacy placeholders. No JavaScript."
+        }
+    },
+    "author": "Michael Becker",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/seebaermichi/nera-starter-blog.git"
+    },
+    "bugs": {
+        "url": "https://github.com/seebaermichi/nera-starter-blog/issues"
+    },
+    "homepage": "https://github.com/seebaermichi/nera-starter-blog#readme",
+    "publishConfig": {
+        "access": "public"
+    },
+    "engines": {
+        "node": "^20.19.0 || >=22.12.0"
+    },
+    "dependencies": {
+        "@nera-static/plugin-code-blocks": "^1.2.1",
+        "@nera-static/plugin-feed": "^1.0.2",
+        "@nera-static/plugin-images": "^1.0.2",
+        "@nera-static/plugin-navigation": "^3.1.1",
+        "@nera-static/plugin-page-pagination": "^2.4.0",
+        "@nera-static/plugin-sitemap": "^1.0.1",
+        "@nera-static/plugin-social-media-links": "^2.3.0",
+        "@nera-static/plugin-tags": "^3.3.0",
+        "@nera-static/theme-blog": "^1.0.2"
+    },
+    "devDependencies": {
+        "@nera-static/nera": "^1.11.1",
+        "eslint": "^10.12.0",
+        "husky": "^9.1.7",
+        "vitest": "^5.0.3"
+    }
+}

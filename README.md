@@ -61,9 +61,6 @@ Replace the copied `de:` entry in `config/app.yaml` with:
         Read more: Weiterlesen
 ```
 
-For a German-only blog, also delete the `en:` entry: the theme shows a
-language switch whenever `translations` has two languages.
-
 ## Requirements
 
 - `@nera-static/nera` 1.11.0 or later, with `@nera-static/core` 4.15.0 or

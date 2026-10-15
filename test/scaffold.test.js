@@ -122,7 +122,10 @@ describe('nera new --starter <this repo>', () => {
         for (const post of POSTS) {
             expect(feed).toContain(`<link rel="alternate" type="text/html" href="https://example.com/${post}"/>`)
         }
-        expect(read(site, 'public/sitemap.xml')).toContain('<loc>https://example.com/index.html</loc>')
+        const sitemap = read(site, 'public/sitemap.xml')
+        expect(sitemap).toContain('<loc>https://example.com/index.html</loc>')
+        // The post's `updated`, not its `date` (plugin-sitemap >= 1.1.0).
+        expect(sitemap).toMatch(/<loc>https:\/\/example\.com\/posts\/tags\.html<\/loc>\s*<lastmod>2026-01-12<\/lastmod>/)
         expect(read(site, 'public/robots.txt')).toContain('Sitemap: https://example.com/sitemap.xml')
     })
 
@@ -151,6 +154,8 @@ describe('nera new --starter <this repo>', () => {
         const tag = read(site, 'public/tags/writing.html')
         expect(tag).toContain('<h1 class="tag-overview__title">writing</h1>')
         expect(tag).toContain('<meta name="description" content="All posts with this tag.">')
+        // A calendar date read in UTC (plugin-tags >= 3.4.0), whatever the build's time zone.
+        expect(tag).toContain('<time class="tag-overview__item-date" datetime="2026-09-21">September 21, 2026</time>')
 
         const archive = read(site, 'public/archive.html')
         expect(archive.match(/class="post-archive__year"/g)).toHaveLength(2)
@@ -234,13 +239,18 @@ describe('nera new --starter <this repo> --name "Brot & Zeit" --lang de', () => 
         expect(html).toContain('<html lang="de">')
         expect(html).toContain('<title>Welcome – Brot &amp; Zeit</title>')
         expect(fs.existsSync(path.join(site, 'public', 'feed.xml'))).toBe(true)
+        // `en` stays beside the copied `de`, but no English page exists: no
+        // one-item switch (theme-blog >= 1.0.3).
+        expect(html).not.toContain('lang-switch')
     }, TIMEOUT)
 
     it('renders German, without a language switch, with the README\'s German texts alone', () => {
         const readme = fs.readFileSync(path.join(root, 'README.md'), 'utf-8')
         const de = readme.match(/```yaml\n( {4}de:\n[\s\S]*?)```/)[1]
         const app = read(site, 'config/app.yaml')
-        fs.writeFileSync(path.join(site, 'config', 'app.yaml'), `${app.split(/^translations:$/m)[0]}translations:\n${de}`)
+        // As the README says: replace the copied `de:` entry, keep `en:`.
+        fs.writeFileSync(path.join(site, 'config', 'app.yaml'), `${app.split(/^ {4}de:$/m)[0]}${de}`)
+        expect(read(site, 'config/app.yaml')).toMatch(/^ {4}en:$/m)
 
         expectCleanBuild(site)
         const home = read(site, 'public/index.html')

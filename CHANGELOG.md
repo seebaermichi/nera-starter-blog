@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2026-10-15
+
+### Changed
+
+-   Dependencies raised to `@nera-static/theme-blog` ^1.0.3, `@nera-static/plugin-tags` ^3.4.0 and `@nera-static/plugin-sitemap` ^1.1.0. A `--lang de` site no longer shows a language switch with one item, the sitemap's `<lastmod>` reads a post's `updated`, and tag pages show calendar dates that do not depend on the build machine's time zone.
+-   `theme/views/vendor/plugin-tags/pages/tag-overview.pug` is the template `@nera-static/plugin-tags` 3.4.0 publishes.
+-   The README's German texts replace only the copied `de:` entry; deleting `en:` is no longer needed.
+
 ## [1.0.0] - 2026-10-15
 
 ### Added

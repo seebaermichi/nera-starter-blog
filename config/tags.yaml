@@ -1,0 +1,2 @@
+# The theme's tag page; its tag-overview seam renders the plugin's overview.
+tag_overview_layout: 'pages/tag.pug'

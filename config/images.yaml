@@ -1,0 +1,5 @@
+# The post image is the hero, rendered eagerly through the post-media seam.
+eager_first: false
+widths: [480, 800]
+# The theme writes no og:image tag, so the 1200×630 crop would go unused.
+og: false

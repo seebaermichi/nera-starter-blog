@@ -1,0 +1,9 @@
+# Overrides of the theme's config/theme.yaml (deep-merged, arrays replaced).
+# The stylesheet of plugin-code-blocks; the theme never links /_nera/ itself.
+extra_css: ['/_nera/code-blocks.css']
+# Labels the legal checks of `nera check` recognise (Imprint, Privacy).
+footer_links:
+    - label: Imprint
+      href: /imprint.html
+    - label: Privacy
+      href: /privacy.html

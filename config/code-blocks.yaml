@@ -1,0 +1,3 @@
+# The site ships no JavaScript, so the copy button (which needs
+# /_nera/code-blocks.js) would stay hidden: leave it out.
+copy_button: false

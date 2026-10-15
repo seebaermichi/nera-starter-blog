@@ -1,0 +1,8 @@
+# Default class names (nav, nav__link, …) kept: the theme styles them.
+elements:
+    - href: /index.html
+      name: Home
+    - href: /archive.html
+      name: Archive
+    - href: /about.html
+      name: About

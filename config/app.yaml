@@ -1,0 +1,31 @@
+lang: en
+name: My Nera Blog
+robots: index,follow
+theme: blog
+# Replace with your site's real address before you deploy: the feed and the
+# sitemap need absolute URLs, and without `origin` neither is written.
+origin: https://example.com
+
+translations:
+    en:
+        app_description: A blog built with Nera
+        app_keywords: nera, blog, static site generator
+        # The language's own name, shown by the theme's language switch
+        language_name: English
+        # Theme texts: the English keys work as they are; after
+        # `nera new --lang <code>`, translate the copied entry
+        Skip to content: Skip to content
+        Main navigation: Main navigation
+        Language: Language
+        Legal: Legal
+        Recent posts: Recent posts
+        All posts: All posts
+        Published: Published
+        Updated: Updated
+        By: By
+        # footer_links labels (config/theme.yaml)
+        Imprint: Imprint
+        Privacy: Privacy
+        # plugin texts: plugin-page-pagination, plugin-tags
+        Pagination: Pagination
+        Read more: Read more

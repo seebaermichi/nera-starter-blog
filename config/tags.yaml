@@ -1,2 +1,5 @@
 # The theme's tag page; its tag-overview seam renders the plugin's overview.
 tag_overview_layout: 'pages/tag.pug'
+# Merged into every tag page: its <meta name="description">.
+tag_overview_meta:
+    description: All posts with this tag.

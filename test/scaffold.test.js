@@ -148,6 +148,10 @@ describe('nera new --starter <this repo>', () => {
         expect(code).toContain('<b>pages/posts/hello.md</b>')
         expect(code).not.toContain('nera-code__copy')
 
+        const tag = read(site, 'public/tags/writing.html')
+        expect(tag).toContain('<h1 class="tag-overview__title">writing</h1>')
+        expect(tag).toContain('<meta name="description" content="All posts with this tag.">')
+
         const archive = read(site, 'public/archive.html')
         expect(archive.match(/class="post-archive__year"/g)).toHaveLength(2)
     })

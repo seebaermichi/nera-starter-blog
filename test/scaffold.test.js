@@ -231,4 +231,18 @@ describe('nera new --starter <this repo> --name "Brot & Zeit" --lang de', () => 
         expect(html).toContain('<title>Welcome – Brot &amp; Zeit</title>')
         expect(fs.existsSync(path.join(site, 'public', 'feed.xml'))).toBe(true)
     }, TIMEOUT)
+
+    it('renders German, without a language switch, with the README\'s German texts alone', () => {
+        const readme = fs.readFileSync(path.join(root, 'README.md'), 'utf-8')
+        const de = readme.match(/```yaml\n( {4}de:\n[\s\S]*?)```/)[1]
+        const app = read(site, 'config/app.yaml')
+        fs.writeFileSync(path.join(site, 'config', 'app.yaml'), `${app.split(/^translations:$/m)[0]}translations:\n${de}`)
+
+        expectCleanBuild(site)
+        const home = read(site, 'public/index.html')
+        expect(home).not.toContain('lang-switch')
+        expect(home).toContain('Zum Inhalt springen')
+        expect(home).toContain('Neueste Beiträge')
+        expect(read(site, 'public/posts/tags.html')).toContain('aria-label="Blätternavigation"')
+    }, TIMEOUT)
 })

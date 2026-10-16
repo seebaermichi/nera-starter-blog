@@ -1,6 +1,6 @@
 {
     "name": "@nera-static/starter-blog",
-    "version": "1.0.1",
+    "version": "1.1.0",
     "description": "A ready-to-edit Nera blog on @nera-static/theme-blog: three sample posts, tags, an archive by year, prev/next, an Atom feed, a sitemap, code blocks, navigation, responsive images, social links and imprint and privacy placeholders. No JavaScript.",
     "type": "module",
     "scripts": {
@@ -41,7 +41,7 @@
         "access": "public"
     },
     "engines": {
-        "node": "^20.19.0 || >=22.12.0"
+        "node": ">=22.12.0"
     },
     "dependencies": {
         "@nera-static/plugin-code-blocks": "^1.2.1",

@@ -65,7 +65,7 @@ Replace the copied `de:` entry in `config/app.yaml` with:
 
 - `@nera-static/nera` 1.11.0 or later, with `@nera-static/core` 4.15.0 or
   later (the theme's floor; a fresh install brings the newest)
-- Node.js `^20.19.0 || >=22.12.0`
+- Node.js `>=22.12.0` (its bundled npm 10.9 or later)
 
 ## License
 
@@ -80,4 +80,3 @@ After `nera new` the files are yours: a starter has no update path.
 2. Replace `pages/imprint.md` and `pages/privacy.md` with your own legal texts.
 3. Replace the social link in `config/social-media-links.yaml`, the about
    page and the sample posts.
-4. Run `nera dev` to preview while you edit.

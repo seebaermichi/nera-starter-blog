@@ -1,0 +1,46 @@
+# Read by Nera Pro only; Nera ignores this file.
+#
+# The editing schema of this blog: one entry per page type, keyed by the
+# page's `layout`, with a label for the editor and, per field, the label, a
+# help text and a `type` where Nera Pro could guess wrong from the value
+# (string, boolean, date, number, list, list_of_objects). Delete it, and the
+# editor learns the fields from your pages instead.
+page_types:
+    pages/post.pug:
+        label: Blog post
+        # Where "New page" puts a post
+        folder: posts
+        fields:
+            title: { label: Title }
+            description: { label: Description, help: One or two sentences for search results and the post list }
+            date: { label: Published on, type: date }
+            updated: { label: Updated on, type: date, help: Leave empty unless you changed the post after publishing it }
+            author: { label: Author }
+            lead: { label: Lead, help: An introduction shown above the post }
+            tags: { label: Tags, type: list, help: One word per tag. Each tag gets a page that lists its posts }
+            image: { label: Cover image, help: "Its path on the site: /images/photo.jpg for assets/images/photo.jpg" }
+            image_alt: { label: Cover image description, help: "What the image shows, for readers who cannot see it" }
+            slug: { label: Slug, help: The same in every translation of the post }
+    pages/home.pug:
+        label: Home page
+        fields:
+            title: { label: Title }
+            lead: { label: Lead, help: An introduction shown under the title }
+            description: { label: Description, help: One or two sentences for search results }
+            archive_href: { label: Archive link, help: "Where the All posts link leads, e.g. /archive.html" }
+            slug: { label: Slug, help: The same in every translation of the page }
+    pages/archive.pug:
+        label: Archive
+        fields:
+            title: { label: Title }
+            lead: { label: Lead, help: An introduction shown under the title }
+            description: { label: Description, help: One or two sentences for search results }
+            slug: { label: Slug, help: The same in every translation of the page }
+    pages/default.pug:
+        label: Page
+        fields:
+            title: { label: Title }
+            lead: { label: Lead, help: An introduction shown under the title }
+            description: { label: Description, help: One or two sentences for search results }
+            robots: { label: Search engines, help: "noindex,follow keeps the page out of search results, as on the imprint and privacy pages" }
+            slug: { label: Slug, help: The same in every translation of the page }

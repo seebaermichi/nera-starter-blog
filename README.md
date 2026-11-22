@@ -32,6 +32,8 @@ language gets a copy of the English `translations:` entry to translate.
 - `config/app.yaml`: name, language, `theme: blog`, `origin`, the theme texts
 - `config/theme.yaml`, `tags.yaml`, `navigation.yaml`, `images.yaml`,
   `code-blocks.yaml`, `social-media-links.yaml`
+- `config/cms.yaml`: the editing schema for Nera Pro (labels, help texts and
+  field types per page type); Nera ignores it
 - `theme/views/partials/`: the theme's seams, filled with the plugins' output
 - `theme/views/vendor/`: the plugins' published templates
 - plugins: tags, page-pagination, feed, sitemap, code-blocks, navigation,

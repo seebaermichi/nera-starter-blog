@@ -200,6 +200,16 @@ describe('nera new --starter <this repo>', () => {
         }
     })
 
+    it('hands config/cms.yaml to the site for Nera Pro and leaves it out of public/', () => {
+        expect(read(site, 'config/cms.yaml')).toBe(read(root, 'config/cms.yaml'))
+        const pub = path.join(site, 'public')
+        expect(walk(pub).filter((f) => path.basename(f) === 'cms.yaml')).toEqual([])
+        // Nera ignores the file: no page, feed or stylesheet carries its content.
+        for (const file of walk(pub).filter((f) => /\.(?:html|xml|txt|css)$/.test(f))) {
+            expect(read(pub, file), file).not.toContain('page_types')
+        }
+    })
+
     it('leaves out the scaffold\'s nera:scaffold-default views', () => {
         for (const file of ['theme/views/layouts/layout.pug', 'theme/views/pages/default.pug']) {
             expect(fs.existsSync(path.join(site, file)), file).toBe(false)

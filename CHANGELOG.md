@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-11-22
+
+### Added
+
+-   `config/cms.yaml`, the editing schema Nera Pro reads (format v1): one entry per page type, keyed by its layout (`pages/post.pug`, `pages/home.pug`, `pages/archive.pug`, `pages/default.pug`), with a label, `folder: posts` for posts, and per field a label, a help text where useful and a `type` where the value alone would mislead (dates, tags). Nera ignores the file; a scaffolded site builds the same `public/` with or without it.
+
 ## [1.1.0] - 2026-10-16
 
 ### Changed

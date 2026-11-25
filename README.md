@@ -57,6 +57,11 @@ Replace the copied `de:` entry in `config/app.yaml` with:
         Published: Veröffentlicht
         Updated: Aktualisiert
         By: Von
+        Latest post: Neuester Beitrag
+        Series: Serie
+        Part: Teil
+        About the author: Über den Autor
+        posts: Beiträge
         Imprint: Impressum
         Privacy: Datenschutz
         Pagination: Blätternavigation

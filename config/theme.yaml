@@ -7,3 +7,14 @@ footer_links:
       href: /imprint.html
     - label: Privacy
       href: /privacy.html
+blog:
+    # The series shown on the home page (posts with `series: Start here`)
+    featured_series: Start here
+    # The tag whose newest four posts the home page lists
+    highlight_tag: writing
+# The about block on the home page, and the byline of every post that sets
+# no `author` of its own
+author:
+    name: Ada Example
+    bio: Writes this blog about once a month. Replace this line with a sentence about yourself.
+    href: /about.html

@@ -5,6 +5,8 @@ title: Write your first post
 description: A post is one Markdown file in pages/posts/ with a few lines of frontmatter.
 date: 2026-09-21
 tags: [writing, nera]
+series: Start here
+series_part: 1
 ---
 
 ## One file per post
@@ -36,6 +38,9 @@ heading.
   the file is copied.
 - `description` is the excerpt on the home page and the summary in the feed.
 - `tags`, `author`, `updated`, `image` and `image_alt` are optional.
+- `series` and `series_part` join posts into a series, and `facts` gives a
+  post up to four figures: [Series, facts and the home page](/posts/series-and-facts.html)
+  shows both.
 
 ## Preview and build
 

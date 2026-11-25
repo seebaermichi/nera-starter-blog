@@ -14,7 +14,7 @@ const TIMEOUT = 180_000
 // What `nera new --starter` copies into a site (nera-cli/src/starter.js).
 const STARTER_ENTRIES = ['pages', 'config', 'theme', 'assets', 'plugins', '.neraignore']
 
-const POSTS = ['posts/write-a-post.html', 'posts/tags.html', 'posts/feed.html']
+const POSTS = ['posts/series-and-facts.html', 'posts/write-a-post.html', 'posts/tags.html', 'posts/feed.html']
 const PAGES = ['index.html', 'archive.html', 'about.html', 'imprint.html', 'privacy.html', ...POSTS]
 
 // The theme fixture's config/validate.yaml (nera-theme-blog test/site): every
@@ -159,6 +159,34 @@ describe('nera new --starter <this repo>', () => {
 
         const archive = read(site, 'public/archive.html')
         expect(archive.match(/class="post-archive__year"/g)).toHaveLength(2)
+        expect(archive).toContain('<span class="post-archive__count">2 posts</span>')
+    })
+
+    it('fills the shared blog contract: latest post, series, highlight, author, facts', () => {
+        const home = read(site, 'public/index.html')
+        expect(home).toContain('<h2 class="post-list__title">Latest post</h2>')
+        expect(home).toMatch(/<section class="home-series">\s*<div>\s*<p>Series<\/p>\s*<h2>Start here<\/h2><a class="button" href="\/posts\/write-a-post\.html">Read more<\/a>/)
+        expect(home).toMatch(/<li><a href="\/posts\/write-a-post\.html">Write your first post<\/a><\/li>\s*<li><a href="\/posts\/series-and-facts\.html">/)
+        expect(home).toMatch(/<section class="home-highlight">\s*<h2>writing<\/h2>/)
+        const highlight = home.split('<section class="home-highlight">')[1].split('</section>')[0]
+        expect(highlight.match(/<li>/g)).toHaveLength(3)
+        expect(home).toMatch(/<section class="home-about"><span class="home-about__mark" aria-hidden="true">AE<\/span>\s*<div>\s*<p>About the author<\/p>\s*<h2>Ada Example<\/h2>/)
+        expect(home).toContain('<div class="home-about__links"><a class="button" href="/about.html">Read more</a></div>')
+
+        const post = read(site, 'public/posts/series-and-facts.html')
+        expect(post).toContain('<p class="post__series">Series: Start here · Part 2</p>')
+        expect(post).toContain('<span class="post__author post-author__name">Ada Example</span>')
+        const facts = [...post.matchAll(/<dd class="post-facts__value">([^<]*)<\/dd>/g)].map(([, value]) => value)
+        expect(facts).toEqual(['3 keys', '2 keys', 'at most 4 figures', '5 minutes'])
+        expect(post).toContain('<nav class="post-series" aria-label="Series">')
+        expect(post).toContain('<li class="post-series__item"><span>01</span><a href="/posts/write-a-post.html">Write your first post</a></li>')
+        expect(post).toContain('<li class="post-series__item post-series__item--current"><span>02</span><a href="/posts/series-and-facts.html" aria-current="page">')
+        expect(post).toContain('page-pagination__link--previous" href="/posts/write-a-post.html"')
+
+        const first = read(site, 'public/posts/write-a-post.html')
+        expect(first).toContain('<p class="post__series">Series: Start here · Part 1</p>')
+        expect(first).toContain('page-pagination__link--next" href="/posts/series-and-facts.html"')
+        expect(first).not.toContain('post-facts')
     })
 
     it('makes no third-party request and ships no JavaScript', () => {
@@ -267,6 +295,16 @@ describe('nera new --starter <this repo> --name "Brot & Zeit" --lang de', () => 
         expect(home).not.toContain('lang-switch')
         expect(home).toContain('Zum Inhalt springen')
         expect(home).toContain('Neueste Beiträge')
+        for (const text of ['Neuester Beitrag', '<p>Serie</p>', '<p>Über den Autor</p>']) {
+            expect(home).toContain(text)
+        }
+        for (const text of ['Latest post', '>Series<', 'About the author']) {
+            expect(home).not.toContain(text)
+        }
+        expect(read(site, 'public/archive.html')).toContain('<span class="post-archive__count">2 Beiträge</span>')
+        const post = read(site, 'public/posts/series-and-facts.html')
+        expect(post).toContain('<p class="post__series">Serie: Start here · Teil 2</p>')
+        expect(post).toContain('<nav class="post-series" aria-label="Serie">')
         expect(read(site, 'public/posts/tags.html')).toContain('aria-label="Blätternavigation"')
     }, TIMEOUT)
 })

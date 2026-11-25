@@ -23,6 +23,12 @@ translations:
         Published: Published
         Updated: Updated
         By: By
+        Latest post: Latest post
+        Series: Series
+        Part: Part
+        About the author: About the author
+        # "n posts" per year in the archive
+        posts: posts
         # footer_links labels (config/theme.yaml)
         Imprint: Imprint
         Privacy: Privacy

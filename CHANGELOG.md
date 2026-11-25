@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Dependencies raised to `@nera-static/theme-blog` ^2.0.0 (the look "Plain" and the contract it shares with Stack, Ansitz and Umwege), `@nera-static/plugin-tags` ^3.4.1 and `@nera-static/plugin-images` ^1.0.3, the theme's peer floors. Sites already scaffolded keep theme-blog 1.x; a starter has no update path.
 -   The npm and `nera.starter` descriptions, which the `nera new` picker shows, name four sample posts with a series.
+-   The home's first body heading is "About this blog" instead of "Start here", so it no longer repeats the series block's heading above it.
+-   README: the German texts for `--lang de` also set `aria_label: Soziale Medien` in `config/social-media-links.yaml`.
 
 ## [1.2.0] - 2026-11-22
 

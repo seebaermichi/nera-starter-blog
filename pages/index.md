@@ -7,7 +7,7 @@ description: A blog built with Nera and the blog theme.
 archive_href: /archive.html
 ---
 
-## Start here
+## About this blog
 
 This blog was scaffolded from the Nera blog starter. The newest posts are
 listed below, the archive has all of them, and every tag has a page of its own.

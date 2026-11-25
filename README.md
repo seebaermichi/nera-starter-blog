@@ -78,6 +78,12 @@ Replace the copied `de:` entry in `config/app.yaml` with:
         Read more: Weiterlesen
 ```
 
+And set the social links' label in `config/social-media-links.yaml`:
+
+```yaml
+aria_label: Soziale Medien
+```
+
 ## Requirements
 
 - `@nera-static/nera` 1.11.0 or later, with `@nera-static/core` 4.15.0 or

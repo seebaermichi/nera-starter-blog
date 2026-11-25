@@ -172,6 +172,10 @@ describe('nera new --starter <this repo>', () => {
         expect(highlight.match(/<li>/g)).toHaveLength(3)
         expect(home).toMatch(/<section class="home-about"><span class="home-about__mark" aria-hidden="true">AE<\/span>\s*<div>\s*<p>About the author<\/p>\s*<h2>Ada Example<\/h2>/)
         expect(home).toContain('<div class="home-about__links"><a class="button" href="/about.html">Read more</a></div>')
+        // The body's headings must not repeat a block's (the series is "Start here").
+        const headings = [...home.matchAll(/<h2[^>]*>([^<]*)<\/h2>/g)].map(([, text]) => text)
+        expect(headings).toContain('About this blog')
+        expect(new Set(headings).size).toBe(headings.length)
 
         const post = read(site, 'public/posts/series-and-facts.html')
         expect(post).toContain('<p class="post__series">Series: Start here · Part 2</p>')
@@ -289,12 +293,18 @@ describe('nera new --starter <this repo> --name "Brot & Zeit" --lang de', () => 
         // As the README says: replace the copied `de:` entry, keep `en:`.
         fs.writeFileSync(path.join(site, 'config', 'app.yaml'), `${app.split(/^ {4}de:$/m)[0]}${de}`)
         expect(read(site, 'config/app.yaml')).toMatch(/^ {4}en:$/m)
+        // And, as it says, the social links' label.
+        const label = readme.match(/```yaml\n(aria_label: .+)\n```/)[1]
+        const links = read(site, 'config/social-media-links.yaml')
+        expect(links).toMatch(/^aria_label: .+$/m)
+        fs.writeFileSync(path.join(site, 'config', 'social-media-links.yaml'), links.replace(/^aria_label: .+$/m, label))
 
         expectCleanBuild(site)
         const home = read(site, 'public/index.html')
         expect(home).not.toContain('lang-switch')
         expect(home).toContain('Zum Inhalt springen')
         expect(home).toContain('Neueste Beiträge')
+        expect(home).toContain('<nav class="social-media-links" aria-label="Soziale Medien">')
         for (const text of ['Neuester Beitrag', '<p>Serie</p>', '<p>Über den Autor</p>']) {
             expect(home).toContain(text)
         }

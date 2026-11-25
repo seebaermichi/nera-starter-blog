@@ -47,6 +47,16 @@ describe('package.json starter contract', () => {
         expect(major === 2 && minor >= 4).toBe(true)
     })
 
+    it('uses theme-blog 2.x and the plugin floors its peer ranges require', () => {
+        // theme-blog 2.0.0 ("Plain", the shared blog contract) peers on
+        // plugin-tags ^3.4.1 and plugin-images ^1.0.3.
+        const version = (name) => pkg.dependencies[`@nera-static/${name}`].slice(1).split('.').map(Number)
+        const atLeast = ([a, b, c], [x, y, z]) => a === x && (b > y || (b === y && c >= z))
+        expect(version('theme-blog')[0]).toBe(2)
+        expect(atLeast(version('plugin-tags'), [3, 4, 1])).toBe(true)
+        expect(atLeast(version('plugin-images'), [1, 0, 3])).toBe(true)
+    })
+
     it('has no lifecycle scripts besides prepare', () => {
         const lifecycle = [
             'preinstall', 'install', 'postinstall', 'prepublish',

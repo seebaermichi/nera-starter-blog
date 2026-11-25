@@ -1,7 +1,7 @@
 {
     "name": "@nera-static/starter-blog",
-    "version": "1.2.0",
-    "description": "A ready-to-edit Nera blog on @nera-static/theme-blog: three sample posts, tags, an archive by year, prev/next, an Atom feed, a sitemap, code blocks, navigation, responsive images, social links and imprint and privacy placeholders. No JavaScript.",
+    "version": "1.3.0",
+    "description": "A ready-to-edit Nera blog on @nera-static/theme-blog: four sample posts with a series, tags, an archive by year, prev/next, an Atom feed, a sitemap, code blocks, navigation, responsive images, social links and imprint and privacy placeholders. No JavaScript.",
     "type": "module",
     "scripts": {
         "lint": "eslint .",
@@ -24,7 +24,7 @@
     "nera": {
         "starter": {
             "label": "Blog",
-            "description": "A ready-to-edit Nera blog on @nera-static/theme-blog: three sample posts, tags, an archive by year, prev/next, an Atom feed, a sitemap, code blocks, navigation, responsive images, social links and imprint and privacy placeholders. No JavaScript."
+            "description": "A ready-to-edit Nera blog on @nera-static/theme-blog: four sample posts with a series, tags, an archive by year, prev/next, an Atom feed, a sitemap, code blocks, navigation, responsive images, social links and imprint and privacy placeholders. No JavaScript."
         }
     },
     "author": "Michael Becker",

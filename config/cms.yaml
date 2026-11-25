@@ -18,6 +18,16 @@ page_types:
             author: { label: Author }
             lead: { label: Lead, help: An introduction shown above the post }
             tags: { label: Tags, type: list, help: One word per tag. Each tag gets a page that lists its posts }
+            series: { label: Series, help: "The same name in every post of a series, e.g. Start here" }
+            series_part: { label: Part of the series, type: number, help: "1 for the first post of the series, 2 for the second, and so on" }
+            facts:
+                label: Facts
+                type: list_of_objects
+                help: "At most four figures, shown beside the post. Give a value its unit: 1 hour a week"
+                entries:
+                    label: { label: Label, help: What the figure counts }
+                    value: { label: Value, help: "The figure with its unit, e.g. 5 minutes" }
+            location: { label: Location, help: "Where the post was written or set. This theme does not show it; the photo and travel themes do" }
             image: { label: Cover image, help: "Its path on the site: /images/photo.jpg for assets/images/photo.jpg" }
             image_alt: { label: Cover image description, help: "What the image shows, for readers who cannot see it" }
             slug: { label: Slug, help: The same in every translation of the post }

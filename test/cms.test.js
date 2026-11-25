@@ -38,11 +38,13 @@ function markdownFiles(dir) {
     })
 }
 
-// The `layout` value of a sample page's frontmatter, as Nera Pro reads it.
-function layoutOf(file) {
+// A sample page's frontmatter, parsed as Nera Pro reads it ({} without one).
+function frontmatterOf(file) {
     const match = fs.readFileSync(file, 'utf-8').match(/^---\r?\n([\s\S]*?)\r?\n---/)
-    return match ? parse(match[1]).layout : undefined
+    return match ? parse(match[1]) : {}
 }
+
+const layoutOf = (file) => frontmatterOf(file).layout
 
 const pageTypes = Object.entries(cms.page_types)
 const fieldsOf = ([, pageType]) => Object.entries(pageType.fields)
@@ -135,5 +137,25 @@ describe('config/cms.yaml', () => {
         expect(post.date.type).toBe('date')
         expect(post.updated.type).toBe('date')
         expect(post.tags.type).toBe('list')
+        expect(post.series_part.type).toBe('number')
+        expect(post.facts.type).toBe('list_of_objects')
+    })
+
+    it('offers the shared blog contract fields a theme switch keeps', () => {
+        const post = cms.page_types['pages/post.pug'].fields
+        for (const name of ['series', 'series_part', 'facts', 'location']) {
+            expect(post[name], name).toBeDefined()
+        }
+        expect(post.series.type).toBeUndefined()
+        expect(post.location.type).toBeUndefined()
+    })
+
+    it('matches facts and series_part to the sample post that writes them', () => {
+        const file = path.join(pagesDir, 'posts', 'series-and-facts.md')
+        const front = frontmatterOf(file)
+        const entries = Object.keys(cms.page_types['pages/post.pug'].fields.facts.entries).sort()
+        expect(front.facts.length).toBeGreaterThan(0)
+        for (const fact of front.facts) expect(Object.keys(fact).sort()).toEqual(entries)
+        expect(typeof front.series_part).toBe('number')
     })
 })

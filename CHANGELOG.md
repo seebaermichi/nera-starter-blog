@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-11-25
+
+### Added
+
+-   `pages/posts/series-and-facts.md`, a fourth sample post: part 2 of the series "Start here" (part 1 is `write-a-post.md`, which now sets `series` and `series_part`), with four `facts`.
+-   `config/theme.yaml`: `blog.featured_series: Start here` and `blog.highlight_tag: writing` for the home's series and highlight blocks, and `author.name`, `author.bio`, `author.href` (`/about.html`) for the about block and the byline of every post without its own `author`.
+-   `config/app.yaml`: the theme's new texts `Latest post`, `Series`, `Part`, `About the author` and `posts` under `translations.en`; the README's German block carries them too.
+-   `config/cms.yaml`: a post's `series`, `series_part` (number), `facts` (a list of `label` and `value`) and `location`, which Plain does not show but the photo and travel blog themes do, so it is kept when a site switches by `theme:`.
+-   README: the look "Plain", the four sample posts, the new `config/theme.yaml` keys, and a First steps line for `author:` and for `featured_series`/`highlight_tag` once the sample posts are gone.
+
+### Changed
+
+-   Dependencies raised to `@nera-static/theme-blog` ^2.0.0 (the look "Plain" and the contract it shares with Stack, Ansitz and Umwege), `@nera-static/plugin-tags` ^3.4.1 and `@nera-static/plugin-images` ^1.0.3, the theme's peer floors. Sites already scaffolded keep theme-blog 1.x; a starter has no update path.
+-   The npm and `nera.starter` descriptions, which the `nera new` picker shows, name four sample posts with a series.
+
 ## [1.2.0] - 2026-11-22
 
 ### Added

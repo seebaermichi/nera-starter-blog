@@ -7,8 +7,10 @@
 
 A ready-to-edit blog for the [Nera](https://github.com/seebaermichi/nera)
 static site generator, on
-[`@nera-static/theme-blog`](https://www.npmjs.com/package/@nera-static/theme-blog):
-three sample posts, tags with a page per tag, an archive by year, prev/next
+[`@nera-static/theme-blog`](https://www.npmjs.com/package/@nera-static/theme-blog)
+2.x and its look "Plain": black on white, one system sans-serif, dates, the
+author line and a post's facts in a margin on the left. Four sample posts, two
+of them a series, tags with a page per tag, an archive by year, prev/next
 between posts, an Atom feed, a sitemap, code blocks, a menu, responsive images,
 social links and imprint and privacy placeholders. No JavaScript, no
 third-party requests; a fresh site passes `nera build --check` and
@@ -26,14 +28,22 @@ language gets a copy of the English `translations:` entry to translate.
 
 ## What you get
 
-- `pages/index.md` (home), `archive.md`, `about.md`, and three posts in
-  `pages/posts/`
+- `pages/index.md` (home), `archive.md`, `about.md`, and four posts in
+  `pages/posts/`: `write-a-post.md` and `series-and-facts.md` (parts 1 and 2
+  of the series "Start here", the second with `facts`), `tags.md` (with an
+  image and an `author`) and `feed.md`
 - `pages/imprint.md`, `pages/privacy.md`: **placeholders, not legal texts**
 - `config/app.yaml`: name, language, `theme: blog`, `origin`, the theme texts
-- `config/theme.yaml`, `tags.yaml`, `navigation.yaml`, `images.yaml`,
-  `code-blocks.yaml`, `social-media-links.yaml`
+- `config/theme.yaml`: the code-blocks stylesheet, the footer links, and what
+  the home shows: `blog.featured_series` (the series "Start here"),
+  `blog.highlight_tag` (the newest posts tagged `writing`) and `author.name`,
+  `author.bio`, `author.href` (the about block, and the byline of every post
+  without its own `author`)
+- `config/tags.yaml`, `navigation.yaml`, `images.yaml`, `code-blocks.yaml`,
+  `social-media-links.yaml`
 - `config/cms.yaml`: the editing schema for Nera Pro (labels, help texts and
-  field types per page type); Nera ignores it
+  field types per page type, including a post's `series`, `series_part`,
+  `facts` and `location`); Nera ignores it
 - `theme/views/partials/`: the theme's seams, filled with the plugins' output
 - `theme/views/vendor/`: the plugins' published templates
 - plugins: tags, page-pagination, feed, sitemap, code-blocks, navigation,
@@ -85,5 +95,9 @@ After `nera new` the files are yours: a starter has no update path.
 1. Replace `origin: https://example.com` in `config/app.yaml` with your
    site's real address. The feed and the sitemap are built from it.
 2. Replace `pages/imprint.md` and `pages/privacy.md` with your own legal texts.
-3. Replace the social link in `config/social-media-links.yaml`, the about
-   page and the sample posts.
+3. Put your name and a sentence about yourself under `author:` in
+   `config/theme.yaml`, and replace the social link in
+   `config/social-media-links.yaml`, the about page and the sample posts.
+4. When you delete the sample posts, set `blog.featured_series` and
+   `blog.highlight_tag` in `config/theme.yaml` to a series and a tag of your
+   own, or to `''` to leave those blocks out.

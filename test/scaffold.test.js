@@ -8,6 +8,7 @@ import { parse } from 'yaml'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const cli = path.join(root, 'node_modules', '@nera-static', 'nera', 'bin', 'nera.js')
+const searchPlugin = path.join(root, 'node_modules', '@nera-static', 'plugin-search')
 const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf-8'))
 
 const TIMEOUT = 180_000
@@ -16,7 +17,10 @@ const TIMEOUT = 180_000
 const STARTER_ENTRIES = ['pages', 'config', 'theme', 'assets', 'plugins', '.neraignore']
 
 const POSTS = ['posts/series-and-facts.html', 'posts/write-a-post.html', 'posts/tags.html', 'posts/feed.html']
-const PAGES = ['index.html', 'archive.html', 'about.html', 'imprint.html', 'privacy.html', ...POSTS]
+const PAGES = ['index.html', 'archive.html', 'about.html', 'search.html', 'imprint.html', 'privacy.html', ...POSTS]
+
+// The only script tag a page may carry besides JSON-LD: plugin-search's client, on the search page.
+const SEARCH_SCRIPT = /<script src="\/js\/search\.js"><\/script>/g
 
 // The canonical link plugin-canonical-links writes into every page.
 const CANONICAL = /<link href="https:\/\/example\.com\/[^"]*" rel="canonical">/g
@@ -78,6 +82,11 @@ function walk(dir, base = dir) {
     })
 }
 
+// Every file of the starter folders, as paths relative to the repo root.
+const starterFiles = () => STARTER_ENTRIES
+    .filter((e) => fs.existsSync(path.join(root, e)))
+    .flatMap((e) => walk(path.join(root, e)).map((f) => path.join(e, f)))
+
 // The JSON-LD graphs of a built page.
 const jsonLd = (page) => [...page.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)]
     .map(([, json]) => JSON.parse(json))
@@ -120,10 +129,34 @@ describe('the starter files', () => {
         expect(head).toContain('include /vendor/plugin-structured-data/index')
     })
 
-    it('run canonical links and structured data after plugin-tags', () => {
+    it('run canonical links, structured data and search after plugin-tags, search last', () => {
         expect(readYaml(root, 'config/plugin-order.yaml')['plugin-order']).toEqual([
-            { end: ['plugin-canonical-links', 'plugin-structured-data'] },
+            { end: ['plugin-canonical-links', 'plugin-structured-data', 'plugin-search'] },
         ])
+    })
+
+    it('ship plugin-search\'s template and client unedited, loaded by scripts-extra, and no search index', () => {
+        for (const [file, source] of [
+            ['theme/views/vendor/plugin-search/search.pug', 'views/search.pug'],
+            ['theme/assets/js/search.js', 'views/search.js'],
+        ]) {
+            expect(read(root, file), file).toBe(read(searchPlugin, source))
+        }
+        // The template's own script tag is off: scripts-extra.pug loads the client.
+        expect(readYaml(root, 'config/search.yaml')).toEqual({ group_by_lang: true, show_title: false, include_script: false })
+        expect(read(root, 'theme/views/partials/scripts-extra.pug'))
+            .toMatch(/^if meta\.layout === 'pages\/search\.pug'\n {4}script\(src='\/js\/search\.js'\)\n$/m)
+        expect(read(root, 'pages/search.md')).not.toMatch(/^lang:/m)
+        expect(starterFiles().filter((f) => /search-index|\.nera-cache/.test(f))).toEqual([])
+    })
+
+    it('put "Search" last in the menu and carry the search texts under translations.en', () => {
+        const { elements } = readYaml(root, 'config/navigation.yaml')
+        expect(elements.map((e) => e.name)).toEqual(['Home', 'Archive', 'About', 'Search'])
+        expect(elements.at(-1).href).toBe('/search.html')
+        expect(readYaml(root, 'config/app.yaml').translations.en).toMatchObject({
+            search_label: 'Search', search_placeholder: 'Search …', search_no_results: 'No results',
+        })
     })
 
     it('name the author, not the site, as the structured-data entity', () => {
@@ -155,6 +188,7 @@ describe('nera new --starter <this repo>', () => {
         const pub = path.join(site, 'public')
         for (const file of [
             ...PAGES, 'feed.xml', 'sitemap.xml', 'robots.txt', '_nera/code-blocks.css',
+            'js/search.js', 'search-index.json',
             'tags/writing.html', 'tags/nera.html',
         ]) {
             expect(fs.existsSync(path.join(pub, file)), file).toBe(true)
@@ -181,6 +215,7 @@ describe('nera new --starter <this repo>', () => {
         expect(home).toContain('<ul class="nav nav--list">')
         expect(home).toContain('class="tag-cloud')
         expect(home).toContain('href="/archive.html"')
+        expect(home).toMatch(/href="\/search\.html"[^>]*>Search<\/a><\/li>\s*<\/ul>/)
 
         // The middle post by date has both neighbours.
         const post = read(site, 'public/posts/tags.html')
@@ -239,20 +274,41 @@ describe('nera new --starter <this repo>', () => {
         expect(first).not.toContain('post-facts')
     })
 
-    it('makes no third-party request and ships no JavaScript besides JSON-LD', () => {
+    it('renders the search page: one h1, the labelled input, its index, the client once', () => {
+        const pub = path.join(site, 'public')
+        const search = read(pub, 'search.html')
+        expect(search.match(/<h1[\s>]/g)).toHaveLength(1)
+        expect(search).toContain('<h1 class="page__title">Search</h1>')
+        expect(search).toContain('placeholder="Search …" aria-label="Search" data-search-input data-search-index="/search-index.json"')
+        expect(search).toContain('data-search-empty="No results"')
+        expect(search.match(SEARCH_SCRIPT)).toHaveLength(1)
+        // At the end of <body>, after <main>.
+        expect(search.indexOf('</main>')).toBeLessThan(search.search(SEARCH_SCRIPT))
+
+        // The index holds every page the sitemap lists, the tag pages included.
+        const hrefs = JSON.parse(read(pub, 'search-index.json')).map((entry) => entry.href)
+        const locs = [...read(pub, 'sitemap.xml').matchAll(/<loc>https:\/\/example\.com(\/[^<]*)<\/loc>/g)].map(([, loc]) => loc)
+        expect(locs).toContain('/tags/writing.html')
+        for (const loc of locs) expect(hrefs, loc).toContain(loc)
+        expect(fs.existsSync(path.join(pub, 'search-index.de.json'))).toBe(false)
+    })
+
+    it('loads JavaScript on the search page only and makes no third-party request', () => {
         const pub = path.join(site, 'public')
         const html = walk(pub).filter((f) => f.endsWith('.html'))
         expect(html.length).toBeGreaterThanOrEqual(PAGES.length)
         for (const file of html) {
             const page = read(pub, file)
-            // JSON-LD is data, not a script the browser runs.
-            expect(page, file).not.toMatch(/<script(?![^>]*type="application\/ld\+json")/i)
+            // JSON-LD is data, not a script the browser runs; the search client is the one exception.
+            const scripts = file === 'search.html' ? page.replace(SEARCH_SCRIPT, '') : page
+            expect(scripts, file).not.toMatch(/<script(?![^>]*type="application\/ld\+json")/i)
             // The canonical link names the page's own address, not a request.
             expect(page.replace(CANONICAL, ''), file).not.toMatch(/<(?:link|img|source|iframe|video|audio|script)\b[^>]*\s(?:href|src|srcset)="(?:https?:)?\/\//i)
         }
         for (const file of walk(pub).filter((f) => f.endsWith('.css'))) {
             expect(read(pub, file), file).not.toMatch(/url\(\s*['"]?(?:https?:)?\/\/|@import/i)
         }
+        expect(read(pub, 'js/search.js')).not.toMatch(/https?:\/\//)
     })
 
     it('gives every page one JSON-LD graph, and a BlogPosting to the posts only', () => {
@@ -357,6 +413,7 @@ describe('nera new --starter <this repo> --name "Brot & Zeit" --lang de', () => 
         expect(app).toMatch(/^theme: blog$/m)
         expect(app).toMatch(/^ {4}de:\n(?: {8}.+\n)*? {8}Skip to content: Skip to content$/m)
         expect(app).toMatch(/^ {4}de:\n(?: {8}.+\n)*? {8}Pagination: Pagination$/m)
+        expect(app).toMatch(/^ {4}de:\n(?: {8}.+\n)*? {8}search_no_results: No results$/m)
     })
 
     it('still builds, checks and validates clean', () => {
@@ -372,6 +429,27 @@ describe('nera new --starter <this repo> --name "Brot & Zeit" --lang de', () => 
         // `en` stays beside the copied `de`, but no English page exists: no
         // one-item switch (theme-blog >= 1.0.3).
         expect(html).not.toContain('lang-switch')
+        // One index, for the site's language: the search page loads it.
+        expect(read(site, 'public/search.html')).toContain('data-search-index="/search-index.json"')
+    }, TIMEOUT)
+
+    it('takes the search page\'s texts from the de entry', () => {
+        const app = read(site, 'config/app.yaml')
+        // The copied de entry reads like en's, so cut the file at `de:` rather than search for it.
+        const [before, de] = app.split(/^ {4}de:$/m)
+        const german = de
+            .replace(/^( {8}search_label:).*$/m, '$1 Suche')
+            .replace(/^( {8}search_placeholder:).*$/m, '$1 Suchen …')
+            .replace(/^( {8}search_no_results:).*$/m, '$1 Keine Treffer')
+        expect(german).not.toBe(de)
+        fs.writeFileSync(path.join(site, 'config', 'app.yaml'), `${before}    de:${german}`)
+        expect(readYaml(site, 'config/app.yaml').translations.en.search_label).toBe('Search')
+
+        expectCleanBuild(site)
+        const search = read(site, 'public/search.html')
+        expect(search).toContain('<html lang="de">')
+        expect(search).toContain('placeholder="Suchen …" aria-label="Suche"')
+        expect(search).toContain('data-search-empty="Keine Treffer"')
     }, TIMEOUT)
 
     it('renders German, without a language switch, with the README\'s German texts alone', () => {

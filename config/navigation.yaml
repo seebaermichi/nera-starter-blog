@@ -6,3 +6,5 @@ elements:
       name: Archive
     - href: /about.html
       name: About
+    - href: /search.html
+      name: Search

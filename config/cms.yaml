@@ -47,6 +47,13 @@ page_types:
             lead: { label: Lead, help: An introduction shown under the title }
             description: { label: Description, help: One or two sentences for search results }
             slug: { label: Slug, help: The same in every translation of the page }
+    pages/search.pug:
+        label: Search
+        fields:
+            title: { label: Title }
+            lead: { label: Lead, help: "An introduction shown under the title, above the search field" }
+            description: { label: Description, help: One or two sentences for search results }
+            slug: { label: Slug, help: The same in every translation of the page }
     pages/default.pug:
         label: Page
         fields:

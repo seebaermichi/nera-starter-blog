@@ -1,0 +1,9 @@
+//- The site's own page type for plugin-search (the theme has none): the
+//- theme's page header, then the plugin's published template, whose h1 is
+//- off (config/search.yaml show_title: false). Its script comes through the
+//- scripts-extra.pug seam.
+extends ../layouts/layout.pug
+
+block main
+    include ../partials/page-header.pug
+    include /vendor/plugin-search/search.pug

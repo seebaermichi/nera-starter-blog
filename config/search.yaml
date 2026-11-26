@@ -1,0 +1,10 @@
+# One index per language (search-index.json for the site's language, then
+# search-index.<lang>.json), so a search page finds pages of its own language
+# only once the site has a second one. The index is written into theme/assets/
+# on every build: git-ignore theme/assets/search-index*.json.
+group_by_lang: true
+# The search page brings its own <h1> (the theme's page header).
+show_title: false
+# theme/views/partials/scripts-extra.pug loads /js/search.js, on the search
+# page only, so the template leaves out its own script tag.
+include_script: false

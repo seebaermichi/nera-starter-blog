@@ -12,6 +12,7 @@
         "config",
         "pages",
         "theme",
+        "!theme/assets/search-index*.json",
         "CHANGELOG.md"
     ],
     "keywords": [

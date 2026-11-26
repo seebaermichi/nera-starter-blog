@@ -75,7 +75,13 @@ describe('package.json starter contract', () => {
 
     it('ships exactly the starter folders that exist, plus the changelog', () => {
         const existing = STARTER_ENTRIES.filter((e) => fs.existsSync(path.join(root, e)))
-        expect([...pkg.files].sort()).toEqual([...existing, 'CHANGELOG.md'].sort())
+        const shipped = pkg.files.filter((entry) => !entry.startsWith('!'))
+        expect([...shipped].sort()).toEqual([...existing, 'CHANGELOG.md'].sort())
+    })
+
+    it('leaves out only the search index plugin-search writes into theme/assets/ on a local build', () => {
+        // npm pack ignores .gitignore inside a `files` folder; this negation does not.
+        expect(pkg.files.filter((entry) => entry.startsWith('!'))).toEqual(['!theme/assets/search-index*.json'])
     })
 
     it('uses the blog theme and ships none of the scaffold-default views', () => {

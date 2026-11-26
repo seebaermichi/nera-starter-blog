@@ -33,8 +33,9 @@ ${[
         'a11y-html-lang', 'a11y-title', 'a11y-h1', 'a11y-heading-skip', 'a11y-img-alt',
         'a11y-form-label', 'a11y-link-name', 'a11y-main', 'a11y-skip-link', 'a11y-nav-name',
         'a11y-duplicate-id', 'a11y-viewport-zoom', 'a11y-link-lang', 'a11y-target-blank',
-        'a11y-reduced-motion', 'privacy-third-party', 'privacy-insecure', 'privacy-storage',
-        'legal-imprint-link', 'legal-privacy-link', 'legal-outdated-law',
+        'a11y-reduced-motion', 'privacy-third-party', 'privacy-consent-leak', 'privacy-insecure',
+        'privacy-storage', 'legal-imprint-link', 'legal-privacy-link', 'legal-outdated-law',
+        'seo-jsonld',
     ].map((rule) => `    ${rule}: error`).join('\n')}
 legal:
     imprint:

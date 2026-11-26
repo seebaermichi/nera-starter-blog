@@ -482,5 +482,8 @@ describe('nera new --starter <this repo> --name "Brot & Zeit" --lang de', () => 
         expect(post).toContain('<p class="post__series">Serie: Start here · Teil 2</p>')
         expect(post).toContain('<nav class="post-series" aria-label="Serie">')
         expect(read(site, 'public/posts/tags.html')).toContain('aria-label="Blätternavigation"')
+        const search = read(site, 'public/search.html')
+        expect(search).toContain('placeholder="Suchen …" aria-label="Suche"')
+        expect(search).toContain('data-search-empty="Keine Treffer"')
     }, TIMEOUT)
 })

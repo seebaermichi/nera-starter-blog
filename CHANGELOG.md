@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-11-26
+
+### Added
+
+-   Search: `pages/search.md` on the site's own page type `theme/views/pages/search.pug` (the theme's page header, then plugin-search's published template), a "Search" item as the last menu entry, `config/search.yaml` (one index per language, no title of its own, no script tag in the template), `theme/assets/js/search.js` (plugin-search 2.4.0's script) loaded by the `scripts-extra` seam on the search page only, and the texts `search_label`, `search_placeholder` and `search_no_results` under `translations.en`; the README's German block carries them too.
+-   Structured data: `config/structured-data.yaml` with the site entity as a `Person` named like `author.name` and `articles.key: is_post`, and `is_post: true` on the four sample posts, so every post gets a `BlogPosting` whatever the site's language.
+-   Canonical links: an absolute canonical link to itself on every page, tag pages included, from `origin` in `config/app.yaml`.
+-   `theme/views/partials/head-extra.pug` with the canonical links and the structured data, and the published templates of plugin-canonical-links, plugin-structured-data and plugin-search in `theme/views/vendor/`, unedited.
+-   `config/plugin-order.yaml`: plugin-canonical-links, plugin-structured-data and plugin-search run last, so the tag pages get a canonical link and structured data and are in the search index.
+-   `config/cms.yaml`: the search page type and a post's `is_post`.
+-   Dependencies merged into the site: `@nera-static/plugin-search` ^2.4.0, `@nera-static/plugin-structured-data` ^1.1.2 and `@nera-static/plugin-canonical-links` ^2.2.4.
+-   README: search, structured data and canonical links; the First steps name `origin` for the canonical links and the structured data too, the author's name under `entity:` in `config/structured-data.yaml`, git-ignoring `theme/assets/search-index*.json`, and `is_post: true` for a new post; the German menu entries.
+
+### Changed
+
+-   `@nera-static/theme-blog` ^2.1.0, the release with the search page's styling.
+-   The npm and `nera.starter` descriptions, which the `nera new` picker shows, name search, structured data and canonical links and say the only JavaScript runs on the search page, instead of "No JavaScript".
+
 ## [1.3.0] - 2026-11-25
 
 ### Added

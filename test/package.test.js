@@ -33,6 +33,15 @@ describe('package.json starter contract', () => {
         expect(pkg.description).toBe(pkg.nera.starter.description)
     })
 
+    it('says the search script is the only JavaScript, and names the plugins it brings', () => {
+        const { description } = pkg.nera.starter
+        expect(description).not.toContain('No JavaScript')
+        expect(description).toMatch(/JavaScript on the search page only\.$/)
+        for (const feature of ['search, ', 'structured data', 'canonical links', 'a sitemap', 'an Atom feed']) {
+            expect(description, feature).toContain(feature)
+        }
+    })
+
     it('is found by the starter search', () => {
         expect(pkg.keywords).toEqual(['nera', 'nera-starter', 'static-site-generator', 'starter', 'blog'])
     })

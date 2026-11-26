@@ -5,6 +5,7 @@ title: Your feed and sitemap
 description: The build writes an Atom feed for feed readers and a sitemap for search engines.
 date: 2025-03-02
 tags: [publishing, nera]
+is_post: true
 ---
 
 ## The feed

@@ -1,0 +1,7 @@
+# Plugins run alphabetically, except those listed here. These run last, so
+# the tag pages plugin-tags adds get a canonical link and structured data
+# too.
+plugin-order:
+    - end:
+          - plugin-canonical-links
+          - plugin-structured-data

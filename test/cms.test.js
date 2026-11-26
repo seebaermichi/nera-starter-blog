@@ -139,6 +139,7 @@ describe('config/cms.yaml', () => {
         expect(post.tags.type).toBe('list')
         expect(post.series_part.type).toBe('number')
         expect(post.facts.type).toBe('list_of_objects')
+        expect(post.is_post.type).toBe('boolean')
     })
 
     it('offers the shared blog contract fields a theme switch keeps', () => {
@@ -157,5 +158,11 @@ describe('config/cms.yaml', () => {
         expect(front.facts.length).toBeGreaterThan(0)
         for (const fact of front.facts) expect(Object.keys(fact).sort()).toEqual(entries)
         expect(typeof front.series_part).toBe('number')
+    })
+
+    it('finds is_post: true in every sample post, the key structured data reads', () => {
+        const posts = markdownFiles(path.join(pagesDir, 'posts'))
+        expect(posts.length).toBeGreaterThan(0)
+        for (const file of posts) expect(frontmatterOf(file).is_post, file).toBe(true)
     })
 })

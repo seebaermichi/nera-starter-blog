@@ -30,6 +30,7 @@ page_types:
             location: { label: Location, help: "Where the post was written or set. This theme does not show it; the photo and travel themes do" }
             image: { label: Cover image, help: "Its path on the site: /images/photo.jpg for assets/images/photo.jpg" }
             image_alt: { label: Cover image description, help: "What the image shows, for readers who cannot see it" }
+            is_post: { label: Mark as article for search engines, type: boolean, help: "Keep it on: it gives the post a BlogPosting in its structured data" }
             slug: { label: Slug, help: The same in every translation of the post }
     pages/home.pug:
         label: Home page

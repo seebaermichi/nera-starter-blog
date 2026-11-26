@@ -44,15 +44,18 @@
         "node": ">=22.12.0"
     },
     "dependencies": {
+        "@nera-static/plugin-canonical-links": "^2.2.4",
         "@nera-static/plugin-code-blocks": "^1.2.1",
         "@nera-static/plugin-feed": "^1.0.2",
         "@nera-static/plugin-images": "^1.0.3",
         "@nera-static/plugin-navigation": "^3.1.1",
         "@nera-static/plugin-page-pagination": "^2.4.0",
+        "@nera-static/plugin-search": "^2.4.0",
         "@nera-static/plugin-sitemap": "^1.1.0",
         "@nera-static/plugin-social-media-links": "^2.3.0",
+        "@nera-static/plugin-structured-data": "^1.1.2",
         "@nera-static/plugin-tags": "^3.4.1",
-        "@nera-static/theme-blog": "^2.0.0"
+        "@nera-static/theme-blog": "^2.1.0"
     },
     "devDependencies": {
         "@nera-static/nera": "^1.11.1",

@@ -16,6 +16,7 @@ facts:
       value: at most 4 figures
     - label: Time to set up
       value: 5 minutes
+is_post: true
 ---
 
 ## A series

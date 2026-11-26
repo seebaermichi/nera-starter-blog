@@ -9,6 +9,7 @@ author: Ada Example
 tags: [writing, tags]
 image: /images/workbench.jpg
 image_alt: Shapes in rust, grey and sand on a light background
+is_post: true
 ---
 
 ## Tagging a post

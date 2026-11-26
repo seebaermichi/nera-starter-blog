@@ -7,6 +7,7 @@ date: 2026-09-21
 tags: [writing, nera]
 series: Start here
 series_part: 1
+is_post: true
 ---
 
 ## One file per post

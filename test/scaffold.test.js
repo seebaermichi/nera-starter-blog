@@ -4,6 +4,7 @@ import fs from 'fs'
 import os from 'os'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { parse } from 'yaml'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const cli = path.join(root, 'node_modules', '@nera-static', 'nera', 'bin', 'nera.js')
@@ -16,6 +17,9 @@ const STARTER_ENTRIES = ['pages', 'config', 'theme', 'assets', 'plugins', '.nera
 
 const POSTS = ['posts/series-and-facts.html', 'posts/write-a-post.html', 'posts/tags.html', 'posts/feed.html']
 const PAGES = ['index.html', 'archive.html', 'about.html', 'imprint.html', 'privacy.html', ...POSTS]
+
+// The canonical link plugin-canonical-links writes into every page.
+const CANONICAL = /<link href="https:\/\/example\.com\/[^"]*" rel="canonical">/g
 
 // The theme fixture's config/validate.yaml (nera-theme-blog test/site): every
 // rule of `nera check` on, the opt-in ones included, promoted to error so a
@@ -64,6 +68,7 @@ function scaffold(name, extra = []) {
 }
 
 const read = (dir, file) => fs.readFileSync(path.join(dir, file), 'utf-8')
+const readYaml = (dir, file) => parse(read(dir, file))
 
 // Every file below `dir`, as paths relative to it.
 function walk(dir, base = dir) {
@@ -72,6 +77,16 @@ function walk(dir, base = dir) {
         return entry.isDirectory() ? walk(full, base) : [path.relative(base, full)]
     })
 }
+
+// The JSON-LD graphs of a built page.
+const jsonLd = (page) => [...page.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)]
+    .map(([, json]) => JSON.parse(json))
+
+// Every built page with a BlogPosting node, as paths relative to `pub`.
+const blogPostings = (pub) => walk(pub)
+    .filter((f) => f.endsWith('.html'))
+    .filter((f) => jsonLd(read(pub, f)).some((ld) => ld['@graph'].some((node) => node['@type'] === 'BlogPosting')))
+    .sort()
 
 // Build, check and validate: no finding, and no warning from core or a
 // plugin anywhere in the build's text output.
@@ -87,6 +102,37 @@ function expectCleanBuild(site) {
     expect(nera(['validate'], site)).toContain('No problems found')
     expect(JSON.parse(nera(['validate', '--json'], site))).toEqual({ ok: true, results: [] })
 }
+
+describe('the starter files', () => {
+    it('ship the canonical-links and structured-data views unedited, included by head-extra', () => {
+        const plugins = path.join(root, 'node_modules', '@nera-static')
+        for (const [plugin, files] of [
+            ['plugin-canonical-links', ['index.pug', 'partials/canonical-link.pug', 'partials/alternate-links.pug']],
+            ['plugin-structured-data', ['index.pug']],
+        ]) {
+            for (const file of files) {
+                expect(read(root, `theme/views/vendor/${plugin}/${file}`), `${plugin}/${file}`)
+                    .toBe(read(path.join(plugins, plugin), `views/${file}`))
+            }
+        }
+        const head = read(root, 'theme/views/partials/head-extra.pug')
+        expect(head).toContain('include /vendor/plugin-canonical-links/index')
+        expect(head).toContain('include /vendor/plugin-structured-data/index')
+    })
+
+    it('run canonical links and structured data after plugin-tags', () => {
+        expect(readYaml(root, 'config/plugin-order.yaml')['plugin-order']).toEqual([
+            { end: ['plugin-canonical-links', 'plugin-structured-data'] },
+        ])
+    })
+
+    it('name the author, not the site, as the structured-data entity', () => {
+        const { entity, articles } = readYaml(root, 'config/structured-data.yaml')
+        // `nera new --name` renames the site; the author stays theme.yaml's.
+        expect(entity).toMatchObject({ type: 'Person', name: readYaml(root, 'config/theme.yaml').author.name })
+        expect(articles.key).toBe('is_post')
+    })
+})
 
 describe('nera new --starter <this repo>', () => {
     let site
@@ -193,17 +239,55 @@ describe('nera new --starter <this repo>', () => {
         expect(first).not.toContain('post-facts')
     })
 
-    it('makes no third-party request and ships no JavaScript', () => {
+    it('makes no third-party request and ships no JavaScript besides JSON-LD', () => {
         const pub = path.join(site, 'public')
         const html = walk(pub).filter((f) => f.endsWith('.html'))
         expect(html.length).toBeGreaterThanOrEqual(PAGES.length)
         for (const file of html) {
             const page = read(pub, file)
-            expect(page, file).not.toMatch(/<script/i)
-            expect(page, file).not.toMatch(/<(?:link|img|source|iframe|video|audio)\b[^>]*\s(?:href|src|srcset)="(?:https?:)?\/\//i)
+            // JSON-LD is data, not a script the browser runs.
+            expect(page, file).not.toMatch(/<script(?![^>]*type="application\/ld\+json")/i)
+            // The canonical link names the page's own address, not a request.
+            expect(page.replace(CANONICAL, ''), file).not.toMatch(/<(?:link|img|source|iframe|video|audio|script)\b[^>]*\s(?:href|src|srcset)="(?:https?:)?\/\//i)
         }
         for (const file of walk(pub).filter((f) => f.endsWith('.css'))) {
             expect(read(pub, file), file).not.toMatch(/url\(\s*['"]?(?:https?:)?\/\/|@import/i)
+        }
+    })
+
+    it('gives every page one JSON-LD graph, and a BlogPosting to the posts only', () => {
+        const pub = path.join(site, 'public')
+        const html = walk(pub).filter((f) => f.endsWith('.html'))
+        expect(html.length).toBeGreaterThan(PAGES.length)
+        for (const file of html) {
+            const graphs = jsonLd(read(pub, file))
+            expect(graphs, file).toHaveLength(1)
+            const [{ '@context': context, '@graph': graph }] = graphs
+            expect(context, file).toBe('https://schema.org')
+            expect(graph[0], file).toMatchObject({
+                '@id': 'https://example.com/#entity', '@type': 'Person', name: 'Ada Example',
+                url: 'https://example.com/about.html',
+            })
+            expect(graph[1], file).toMatchObject({ '@type': 'WebSite', name: 'My Nera Blog', inLanguage: 'en' })
+        }
+        expect(blogPostings(pub)).toEqual([...POSTS].sort())
+
+        const [{ '@graph': graph }] = jsonLd(read(pub, 'posts/tags.html'))
+        expect(graph.find((node) => node['@type'] === 'BlogPosting')).toMatchObject({
+            '@id': 'https://example.com/posts/tags.html#page',
+            headline: 'Tags and tag pages',
+            datePublished: '2025-11-04T00:00:00Z',
+            dateModified: '2026-01-12T00:00:00Z',
+            author: { '@id': 'https://example.com/#entity' },
+        })
+    })
+
+    it('gives every page, tag pages included, one absolute canonical link to itself', () => {
+        const pub = path.join(site, 'public')
+        const html = walk(pub).filter((f) => f.endsWith('.html'))
+        expect(html).toContain('tags/writing.html')
+        for (const file of html) {
+            expect(read(pub, file).match(CANONICAL), file).toEqual([`<link href="https://example.com/${file}" rel="canonical">`])
         }
     })
 
@@ -281,6 +365,10 @@ describe('nera new --starter <this repo> --name "Brot & Zeit" --lang de', () => 
         expect(html).toContain('<html lang="de">')
         expect(html).toContain('<title>Welcome – Brot &amp; Zeit</title>')
         expect(fs.existsSync(path.join(site, 'public', 'feed.xml'))).toBe(true)
+        // is_post carries no language, so the posts keep their BlogPosting.
+        expect(blogPostings(path.join(site, 'public'))).toEqual([...POSTS].sort())
+        expect(read(site, 'public/tags/writing.html').match(CANONICAL))
+            .toEqual(['<link href="https://example.com/tags/writing.html" rel="canonical">'])
         // `en` stays beside the copied `de`, but no English page exists: no
         // one-item switch (theme-blog >= 1.0.3).
         expect(html).not.toContain('lang-switch')

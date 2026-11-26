@@ -11,13 +11,16 @@ const STARTER_ENTRIES = ['pages', 'config', 'theme', 'assets', 'plugins', '.nera
 
 // The theme and the plugins a scaffolded site gets (ROADMAP-ai.md L5).
 const DEPENDENCIES = [
+    '@nera-static/plugin-canonical-links',
     '@nera-static/plugin-code-blocks',
     '@nera-static/plugin-feed',
     '@nera-static/plugin-images',
     '@nera-static/plugin-navigation',
     '@nera-static/plugin-page-pagination',
+    '@nera-static/plugin-search',
     '@nera-static/plugin-sitemap',
     '@nera-static/plugin-social-media-links',
+    '@nera-static/plugin-structured-data',
     '@nera-static/plugin-tags',
     '@nera-static/theme-blog',
 ]
@@ -34,7 +37,7 @@ describe('package.json starter contract', () => {
         expect(pkg.keywords).toEqual(['nera', 'nera-starter', 'static-site-generator', 'starter', 'blog'])
     })
 
-    it('depends on the blog theme and its eight plugins, with caret ranges', () => {
+    it('depends on the blog theme and its eleven plugins, with caret ranges', () => {
         expect(Object.keys(pkg.dependencies).sort()).toEqual(DEPENDENCIES)
         for (const range of Object.values(pkg.dependencies)) expect(range).toMatch(/^\^\d+\.\d+\.\d+$/)
         expect(pkg.peerDependencies).toBeUndefined()
@@ -47,14 +50,16 @@ describe('package.json starter contract', () => {
         expect(major === 2 && minor >= 4).toBe(true)
     })
 
-    it('uses theme-blog 2.x and the plugin floors its peer ranges require', () => {
+    it('uses theme-blog 2.1 or later and the plugin floors its peer ranges require', () => {
         // theme-blog 2.0.0 ("Plain", the shared blog contract) peers on
-        // plugin-tags ^3.4.1 and plugin-images ^1.0.3.
+        // plugin-tags ^3.4.1 and plugin-images ^1.0.3; 2.1.0 (the search
+        // styling) on plugin-search ^2.4.0.
         const version = (name) => pkg.dependencies[`@nera-static/${name}`].slice(1).split('.').map(Number)
         const atLeast = ([a, b, c], [x, y, z]) => a === x && (b > y || (b === y && c >= z))
-        expect(version('theme-blog')[0]).toBe(2)
+        expect(atLeast(version('theme-blog'), [2, 1, 0])).toBe(true)
         expect(atLeast(version('plugin-tags'), [3, 4, 1])).toBe(true)
         expect(atLeast(version('plugin-images'), [1, 0, 3])).toBe(true)
+        expect(atLeast(version('plugin-search'), [2, 4, 0])).toBe(true)
     })
 
     it('has no lifecycle scripts besides prepare', () => {

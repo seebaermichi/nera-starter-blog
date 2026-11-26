@@ -1,0 +1,20 @@
+# @nera-static/plugin-structured-data: the schema.org JSON-LD in the <head> of
+# every page, which tells search engines and AI assistants who writes the
+# blog. Placeholders: replace them before you deploy. The full list of keys
+# is in the plugin's README.
+#
+# The site URL comes from `origin` in config/app.yaml; relative URLs below
+# are made absolute against it.
+
+entity:
+    # The author of the blog. `name` is set here because `nera new --name`
+    # renames the site, not its author: keep it the same as `author.name`
+    # in config/theme.yaml.
+    type: Person
+    name: Ada Example
+    url: /about.html
+
+# A page whose frontmatter sets `is_post: true` gets a BlogPosting. One key
+# for every language, so a site made with `nera new --lang de` keeps them.
+articles:
+    key: is_post

@@ -1,50 +1,38 @@
-# Node modules
+# Dependencies
 node_modules/
 
 # Logs
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
-# Environment files
+# Environment and credentials: never commit
 .env
 .env.local
-
-# OS-specific
-.DS_Store
-Thumbs.db
-
-# Testing
-coverage/
-.vitest/
-
-# Builds (if you ever bundle or compile)
-dist/
-build/
-
-# VSCode settings
-.vscode/
-
-# Optional cache folders
-.cache/
-
-# npm credentials — never commit
 .npmrc
 
-# Test scratch directory
+# OS and editor
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Test and build output
+coverage/
+.vitest/
 .tmp/
-plans/
-.claude/.work-issue-active
+dist/
+build/
+.cache/
+.nera-cache/
+
+# Browser-test artifacts (Playwright MCP)
+.playwright-mcp/
 
 # Internal development files (plans, Snagio workflow, specs) never belong in the repo
+plans/
 /.claude/
 /.mcp.json
 /ROADMAP*.md
 /DESIGN-BRIEF.md
 
-# Build output of a local `nera build` in this folder stays out of git. npm pack
-# ignores these lines inside `files` folders, so package.json leaves the search
-# index out with `!theme/assets/search-index*.json`.
+# nera-starter-blog-specific
 /public/
-/.nera-cache/
 /theme/assets/search-index*.json
